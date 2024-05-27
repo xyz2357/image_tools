@@ -1,7 +1,8 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget, QTabWidget
 
 from UI.ImageWidget import ImageWidget
+from UI.MosaicWidget import MosaicWidget
 
 
 class ImageTool(QMainWindow):
@@ -17,11 +18,19 @@ class ImageTool(QMainWindow):
         self.centralWidget = QWidget()
         self.setCentralWidget(self.centralWidget)
 
-        self.mainLayout = QVBoxLayout()  # main layout: vertical
+        self.mainLayout = QHBoxLayout()
         self.centralWidget.setLayout(self.mainLayout)
 
         self.imageWidget = ImageWidget()
         self.mainLayout.addWidget(self.imageWidget)
+
+        self.tabs = QTabWidget()
+        self.mainLayout.addWidget(self.tabs)
+        self.tabs.setFixedWidth(400)
+
+        self.mosaicWidget = MosaicWidget()
+        self.tabs.addTab(self.mosaicWidget, "Add Mosaic")
+        self.mosaicWidget.setImageSource(self.imageWidget)
 
 
 def runMainWindow():

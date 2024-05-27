@@ -74,3 +74,6 @@ class ImageWidget(QWidget):
         self._addToUndo()
         self.label.setPixmap(pixmap)
         self.label.adjustSize()  # adjust UI size to fit image  # TODO: shall we?
+
+    def getSelectionRect(self):
+        return self.label.selection_rect
