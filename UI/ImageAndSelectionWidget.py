@@ -1,13 +1,13 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QPushButton, QFileDialog, QScrollArea, QSlider
 from PyQt5.QtGui import QPixmap
-from UI.customized_widgets import SelectableLabel
+from UI.SelectableLabel import SelectableLabel
 
 # A main image widget to open, undo and save widget
 # TODO: redo
 # TODO: zooming?
 # TODO: connect signal here
-class ImageWidget(QWidget):
+class ImageAndSelectionWidget(QWidget):
     def __init__(self):
         super().__init__()
         self._imageHistory = []  # store history images
@@ -42,6 +42,10 @@ class ImageWidget(QWidget):
         self.undoButton.clicked.connect(self._undo)
         layout.addWidget(self.undoButton)
 
+        self.toggleSelectionModeButton = QPushButton("ToggleSelectionMode (Current: %s)" %(self.label.mode), self)
+        self.toggleSelectionModeButton.clicked.connect(self._toggleSelectionMode)
+        layout.addWidget(self.toggleSelectionModeButton)
+
         self.setLayout(layout)
 
     def _undo(self):
@@ -66,6 +70,10 @@ class ImageWidget(QWidget):
             filePath, _ = QFileDialog.getSaveFileName(self, "Save Image", "", "JPG Files (*.jpg *.jpeg);;PNG Files (*.png);;All Files (*)")
             if filePath:
                 self.label.pixmap().save(filePath)
+
+    def _toggleSelectionMode(self):
+        self.label.toggleMode()
+        self.toggleSelectionModeButton.setText("ToggleSelectionMode (Current: %s)" %(self.label.mode))
  
     def getImage(self):
         return self.label.pixmap()
@@ -75,5 +83,7 @@ class ImageWidget(QWidget):
         self.label.setPixmap(pixmap)
         self.label.adjustSize()  # adjust UI size to fit image  # TODO: shall we?
 
-    def getSelectionRect(self):
-        return self.label.selection_rect
+    def getSelectionPolygon(self, to_points=True):
+        if not to_points:
+            return self.label.selection_polygon
+        return [(p.x(), p.y()) for p in self.label.selection_polygon]

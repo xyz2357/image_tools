@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget, QTabWidget
 
-from UI.ImageWidget import ImageWidget
+from UI.ImageAndSelectionWidget import ImageAndSelectionWidget
 from UI.MosaicWidget import MosaicWidget
 
 
@@ -21,16 +21,15 @@ class ImageTool(QMainWindow):
         self.mainLayout = QHBoxLayout()
         self.centralWidget.setLayout(self.mainLayout)
 
-        self.imageWidget = ImageWidget()
-        self.mainLayout.addWidget(self.imageWidget)
+        self.imageAndSelectionWidget = ImageAndSelectionWidget()
+        self.mainLayout.addWidget(self.imageAndSelectionWidget)
 
         self.tabs = QTabWidget()
         self.mainLayout.addWidget(self.tabs)
         self.tabs.setFixedWidth(400)
 
-        self.mosaicWidget = MosaicWidget()
+        self.mosaicWidget = MosaicWidget(self.imageAndSelectionWidget)
         self.tabs.addTab(self.mosaicWidget, "Add Mosaic")
-        self.mosaicWidget.setImageSource(self.imageWidget)
 
 
 def runMainWindow():
