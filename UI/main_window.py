@@ -1,9 +1,9 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget, QTabWidget
 
-from UI.ImageAndSelectionWidget import ImageAndSelectionWidget
-from UI.MosaicWidget import MosaicWidget
-from UI.TextWidget import TextWidget
+from ui.image_and_selection_widget import ImageAndSelectionWidget
+from ui.mosaic_widget import MosaicWidget
+from ui.text_widget import TextWidget
 
 
 class ImageTool(QMainWindow):

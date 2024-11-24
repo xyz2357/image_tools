@@ -10,7 +10,6 @@ def pixmap_to_pil_image_with_alpha(pixmap):
     arr = np.array(ptr).reshape(qimage.height(), qimage.width(), 4)  # 4 for ARGB
     # 创建 PIL Image
     pil_image = Image.fromarray(arr, "RGBA")
-    print(pil_image.mode)
     return pil_image
 
 
