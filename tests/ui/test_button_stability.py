@@ -10,7 +10,7 @@ from pathlib import Path
 # 添加项目根目录到 Python 路径
 sys.path.append(str(Path(__file__).parent.parent.parent))
 
-from ui.main_window import runMainWindow, MainWindow  # 现在应该可以正确导入了
+from ui.main_window import runMainWindow, MainWindow
 
 
 class TestButtonStability(unittest.TestCase):
