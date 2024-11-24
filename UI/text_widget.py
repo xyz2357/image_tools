@@ -3,8 +3,7 @@ from PyQt5.QtWidgets import (QLabel, QVBoxLayout, QWidget, QPushButton,
                            QSpinBox, QFontComboBox)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QPainter, QFont, QFontDatabase, QColor
-from config.fonts import FONT_LIST
-from config.text_widget_settings import *  # Import all settings
+from config.settings import Settings
 
 
 class CustomFontComboBox(QFontComboBox):
@@ -35,23 +34,24 @@ class CustomFontComboBox(QFontComboBox):
 
 
 class TextWidget(QWidget):
-    ALLOWED_FONTS = FONT_LIST
+    ALLOWED_FONTS = Settings.Text.FONT_LIST
 
     def __init__(self, image_and_selection_source):
         super().__init__()
-        self.textSize = TEXT_SIZE_DEFAULT
-        self.textColor = QColor(*DEFAULT_TEXT_COLOR)
+        self.textSize = Settings.Text.FONT_SIZE['DEFAULT']
+        self.textColor = QColor(*Settings.Text.DEFAULT_COLOR)
         self.currentFont = QFont()
-        self.textAngle = TEXT_ANGLE_DEFAULT
+        self.textAngle = Settings.Text.ANGLE['DEFAULT']
         self.image_and_selection_source = image_and_selection_source
         self._initUI()
 
     def _initUI(self):
         layout = QVBoxLayout()
+        layout.setSizeConstraint(QVBoxLayout.SetMinAndMaxSize)
 
         # Text input box
         self.textInput = QLineEdit(self)
-        self.textInput.setPlaceholderText(PLACEHOLDER_TEXT)
+        self.textInput.setPlaceholderText(Settings.Text.PLACEHOLDER_TEXT)
         layout.addWidget(self.textInput)
 
         # Font selection
@@ -60,16 +60,16 @@ class TextWidget(QWidget):
         self.fontComboBox.currentFontChanged.connect(self._changeFont)
         if self.fontComboBox.count() > 0:
             self.currentFont = self.fontComboBox.currentFont()
-        fontLayout.addWidget(QLabel(FONT_LABEL))
+        fontLayout.addWidget(QLabel(Settings.Text.FONT_LABEL))
         fontLayout.addWidget(self.fontComboBox)
         layout.addLayout(fontLayout)
 
         # Color selection
         colorLayout = QHBoxLayout()
-        self.colorButton = QPushButton(COLOR_BUTTON_TEXT, self)
+        self.colorButton = QPushButton(Settings.Text.COLOR_BUTTON_TEXT, self)
         self.colorButton.clicked.connect(self._chooseColor)
         self.colorPreview = QLabel()
-        self.colorPreview.setFixedSize(COLOR_PREVIEW_SIZE, COLOR_PREVIEW_SIZE)
+        self.colorPreview.setFixedSize(Settings.Text.COLOR_PREVIEW_SIZE, Settings.Text.COLOR_PREVIEW_SIZE)
         self._updateColorPreview()
         colorLayout.addWidget(self.colorButton)
         colorLayout.addWidget(self.colorPreview)
@@ -77,22 +77,20 @@ class TextWidget(QWidget):
 
         # Text size control
         sizeLayout = QHBoxLayout()
-        self.sizeLabel = QLabel(TEXT_SIZE_LABEL, self)
         self.sizeSlider = QSlider(Qt.Horizontal, self)
-        self.sizeSlider.setMinimum(TEXT_SIZE_MIN)
-        self.sizeSlider.setMaximum(TEXT_SIZE_MAX)
+        self.sizeSlider.setMinimum(Settings.Text.FONT_SIZE['MIN'])
+        self.sizeSlider.setMaximum(Settings.Text.FONT_SIZE['MAX'])
         self.sizeSlider.setValue(self.textSize)
         
         self.sizeSpinBox = QSpinBox(self)
-        self.sizeSpinBox.setMinimum(TEXT_SIZE_MIN)
-        self.sizeSpinBox.setMaximum(TEXT_SIZE_MAX)
+        self.sizeSpinBox.setMinimum(Settings.Text.FONT_SIZE['MIN'])
+        self.sizeSpinBox.setMaximum(Settings.Text.FONT_SIZE['MAX'])
         self.sizeSpinBox.setValue(self.textSize)
-        self.sizeSpinBox.setFixedWidth(SPINBOX_WIDTH)
+        self.sizeSpinBox.setFixedWidth(Settings.Text.SPINBOX_SIZE)
         
         self.sizeSlider.valueChanged.connect(self._changeTextSize)
         self.sizeSpinBox.valueChanged.connect(self._changeTextSize)
         
-        sizeLayout.addWidget(self.sizeLabel)
         sizeLayout.addWidget(self.sizeSlider)
         sizeLayout.addWidget(self.sizeSpinBox)
         layout.addLayout(sizeLayout)
@@ -100,11 +98,11 @@ class TextWidget(QWidget):
         # Angle control
         angleLayout = QHBoxLayout()
         self.anglePreview = QLabel()
-        self.anglePreview.setFixedSize(PREVIEW_SIZE, PREVIEW_SIZE)
+        self.anglePreview.setFixedSize(Settings.Text.SPINBOX_SIZE, Settings.Text.SPINBOX_SIZE)
         self._updateAnglePreview()
         
         angleContainer = QWidget()
-        angleContainer.setFixedSize(*ANGLE_CONTAINER_SIZE)
+        angleContainer.setFixedSize(*Settings.Text.ANGLE_CONTAINER_SIZE)
         
         angleControlLayout = QVBoxLayout(angleContainer)
         angleControlLayout.setContentsMargins(0, 0, 0, 0)
@@ -112,26 +110,24 @@ class TextWidget(QWidget):
         angleSliderLayout = QHBoxLayout()
         angleSliderLayout.setSpacing(5)
         
-        self.angleLabel = QLabel(TEXT_ANGLE_LABEL, self)
         self.angleSlider = QSlider(Qt.Horizontal)
-        self.angleSlider.setMinimum(TEXT_ANGLE_MIN)
-        self.angleSlider.setMaximum(TEXT_ANGLE_MAX)
-        self.angleSlider.setValue(TEXT_ANGLE_DEFAULT)
+        self.angleSlider.setMinimum(Settings.Text.ANGLE['MIN'])
+        self.angleSlider.setMaximum(Settings.Text.ANGLE['MAX'])
+        self.angleSlider.setValue(Settings.Text.ANGLE['DEFAULT'])
         self.angleSlider.setTickPosition(QSlider.TicksBelow)
-        self.angleSlider.setTickInterval(TEXT_ANGLE_TICK_INTERVAL)
+        self.angleSlider.setTickInterval(Settings.Text.ANGLE_TICK_INTERVAL)
         
         self.angleSpinBox = QSpinBox(self)
-        self.angleSpinBox.setMinimum(TEXT_ANGLE_MIN)
-        self.angleSpinBox.setMaximum(TEXT_ANGLE_MAX)
-        self.angleSpinBox.setValue(TEXT_ANGLE_DEFAULT)
-        self.angleSpinBox.setFixedWidth(SPINBOX_WIDTH)
+        self.angleSpinBox.setMinimum(Settings.Text.ANGLE['MIN'])
+        self.angleSpinBox.setMaximum(Settings.Text.ANGLE['MAX'])
+        self.angleSpinBox.setValue(Settings.Text.ANGLE['DEFAULT'])
+        self.angleSpinBox.setFixedWidth(Settings.Text.SPINBOX_SIZE)
         self.angleSpinBox.setSuffix("°")
         
         # Connect signals
         self.angleSlider.valueChanged.connect(self._changeAngle)
         self.angleSpinBox.valueChanged.connect(self._changeAngle)
         
-        angleSliderLayout.addWidget(self.angleLabel)
         angleSliderLayout.addWidget(self.angleSlider)
         angleSliderLayout.addWidget(self.angleSpinBox)
         
@@ -142,16 +138,15 @@ class TextWidget(QWidget):
         layout.addLayout(angleLayout)
 
         # Apply text button
-        self.applyTextButton = QPushButton(ADD_TEXT_BUTTON, self)
+        self.applyTextButton = QPushButton(Settings.Text.BUTTON_TEXT, self)
         self.applyTextButton.clicked.connect(self.applyText)
         layout.addWidget(self.applyTextButton)
-        self.applyTextButton.setFixedHeight(BUTTON_HEIGHT)
+        self.applyTextButton.setFixedHeight(Settings.Common.Sizes.BUTTON_HEIGHT)
 
         self.setLayout(layout)
-        self.setMaximumHeight(300)
 
     def _updateColorPreview(self):
-        preview = QPixmap(COLOR_PREVIEW_SIZE, COLOR_PREVIEW_SIZE)
+        preview = QPixmap(Settings.Text.COLOR_PREVIEW_SIZE, Settings.Text.COLOR_PREVIEW_SIZE)
         preview.fill(self.textColor)
         self.colorPreview.setPixmap(preview)
 
@@ -175,7 +170,7 @@ class TextWidget(QWidget):
 
     def _updateAnglePreview(self):
         """Update angle preview"""
-        preview = QPixmap(PREVIEW_SIZE, PREVIEW_SIZE)
+        preview = QPixmap(Settings.Text.SPINBOX_SIZE, Settings.Text.SPINBOX_SIZE)
         preview.fill(Qt.white)
         
         painter = QPainter(preview)
@@ -183,20 +178,20 @@ class TextWidget(QWidget):
         
         # Draw border
         painter.setPen(Qt.lightGray)
-        painter.drawRect(0, 0, PREVIEW_SIZE-1, PREVIEW_SIZE-1)
+        painter.drawRect(0, 0, Settings.Text.SPINBOX_SIZE-1, Settings.Text.SPINBOX_SIZE-1)
         
         # Draw text
         painter.setPen(self.textColor)
         font = QFont(self.currentFont)
-        font.setPointSize(PREVIEW_FONT_SIZE)  # Smaller font size for preview
+        font.setPointSize(Settings.Text.PREVIEW_FONT_SIZE)  # Smaller font size for preview
         painter.setFont(font)
         
         # Move to center point and rotate
-        painter.translate(PREVIEW_SIZE/2, PREVIEW_SIZE/2)
+        painter.translate(Settings.Text.SPINBOX_SIZE/2, Settings.Text.SPINBOX_SIZE/2)
         painter.rotate(self.textAngle)
         
         # Draw sample text
-        text = PREVIEW_SAMPLE_TEXT
+        text = Settings.Text.PREVIEW_SAMPLE_TEXT
         text_width = painter.fontMetrics().horizontalAdvance(text)
         text_height = painter.fontMetrics().height()
         painter.drawText(int(-text_width/2), int(text_height/4), text)
@@ -255,3 +250,14 @@ class TextWidget(QWidget):
             painter.end()
 
             self.image_and_selection_source.setImage(new_pixmap) 
+
+
+def runTextWidget():
+    app = QApplication(sys.argv)
+    ex = TextWidget()
+    ex.show()
+    sys.exit(app.exec_())
+
+
+if __name__ == "__main__":
+    runTextWidget()

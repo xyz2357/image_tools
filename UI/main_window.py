@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QHBoxLayout,
 from ui.image_and_selection_widget import ImageAndSelectionWidget
 from ui.mosaic_widget import MosaicWidget
 from ui.text_widget import TextWidget
+from config.settings import Settings
 
 
 class ImageTool(QMainWindow):
@@ -14,7 +15,7 @@ class ImageTool(QMainWindow):
     def initUI(self):
         # Set window properties
         self.setWindowTitle('Image Tools')
-        self.setGeometry(200, 200, 1024, 768)
+        self.setGeometry(Settings.Common.Sizes.MAIN_WINDOW_X, Settings.Common.Sizes.MAIN_WINDOW_Y, Settings.Common.Sizes.MAIN_WINDOW_WIDTH, Settings.Common.Sizes.MAIN_WINDOW_HEIGHT)
 
         self.centralWidget = QWidget()
         self.setCentralWidget(self.centralWidget)

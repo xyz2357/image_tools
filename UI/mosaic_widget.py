@@ -1,4 +1,3 @@
-import sys
 from PyQt5.QtWidgets import QLabel, QVBoxLayout, QWidget, QPushButton, QSlider
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
@@ -8,40 +7,43 @@ from utils.image_utils import (
     pil_image_to_qimage_with_alpha, 
     apply_mosaic
 )
-from config.mosaic_widget_settings import *
+from config.settings import Settings
 
 
 class MosaicWidget(QWidget):
     def __init__(self, image_and_selection_source):
         super().__init__()
-        self.mosaicSize = MOSAIC_SIZE_DEFAULT
+        self.mosaicSize = Settings.Mosaic.MOSAIC_SIZE['DEFAULT']
         self.image_and_selection_source = image_and_selection_source
         self._initUI()
 
     def _initUI(self):
         """Initialize the user interface"""
         layout = QVBoxLayout()
-
-        # Apply mosaic button
-        self.applyMosaicButton = QPushButton(APPLY_BUTTON_TEXT, self)
-        self.applyMosaicButton.clicked.connect(self.applyMosaic)
-        self.applyMosaicButton.setFixedHeight(BUTTON_HEIGHT)
-        layout.addWidget(self.applyMosaicButton)
-
+        # 设置布局的大小约束为最小化
+        layout.setSizeConstraint(QVBoxLayout.SetMinAndMaxSize)
+        
         # Mosaic size label
-        self.sizeLabel = QLabel(SIZE_LABEL_TEXT.format(self.mosaicSize), self)
+        self.sizeLabel = QLabel(Settings.Mosaic.SIZE_LABEL_TEXT.format(self.mosaicSize), self)
+        self.sizeLabel.setFixedHeight(Settings.Common.Sizes.LABEL_HEIGHT)
         layout.addWidget(self.sizeLabel)
 
         # Mosaic size slider
         self.sizeSlider = QSlider(Qt.Horizontal, self)
-        self.sizeSlider.setMinimum(MOSAIC_SIZE_MIN)
-        self.sizeSlider.setMaximum(MOSAIC_SIZE_MAX)
-        self.sizeSlider.setValue(self.mosaicSize // MOSAIC_SIZE_MULTIPLIER)
+        self.sizeSlider.setMinimum(Settings.Mosaic.MOSAIC_SIZE['MIN'])
+        self.sizeSlider.setMaximum(Settings.Mosaic.MOSAIC_SIZE['MAX'])
+        self.sizeSlider.setValue(self.mosaicSize // Settings.Mosaic.SIZE_MULTIPLIER)
         self.sizeSlider.valueChanged.connect(self._changeMosaicSize)
+        self.sizeSlider.setFixedHeight(Settings.Common.Sizes.SLIDER_HEIGHT)
         layout.addWidget(self.sizeSlider)
 
+        # Apply mosaic button
+        self.applyMosaicButton = QPushButton(Settings.Mosaic.BUTTON_TEXT, self)
+        self.applyMosaicButton.clicked.connect(self.applyMosaic)
+        self.applyMosaicButton.setFixedHeight(Settings.Common.Sizes.BUTTON_HEIGHT)
+        layout.addWidget(self.applyMosaicButton)
+
         self.setLayout(layout)
-        self.setMaximumHeight(WIDGET_MAX_HEIGHT)
 
     def applyMosaic(self):
         """Apply mosaic effect to the selected area"""
@@ -61,5 +63,5 @@ class MosaicWidget(QWidget):
 
     def _changeMosaicSize(self, value):
         """Update mosaic size based on slider value"""
-        self.mosaicSize = value * MOSAIC_SIZE_MULTIPLIER
-        self.sizeLabel.setText(SIZE_LABEL_TEXT.format(self.mosaicSize))
+        self.mosaicSize = value * Settings.Mosaic.SIZE_MULTIPLIER
+        self.sizeLabel.setText(Settings.Mosaic.SIZE_LABEL_TEXT.format(self.mosaicSize))
