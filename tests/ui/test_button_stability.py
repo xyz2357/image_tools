@@ -1,48 +1,35 @@
+import os
+import sys
 import unittest
 from unittest.mock import patch
 from PyQt5.QtWidgets import QApplication, QFileDialog
 from PyQt5.QtTest import QTest
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
-import sys
-import os
 
-# 获取当前文件的目录
-current_dir = os.path.dirname(os.path.abspath(__file__))
 # 获取项目根目录
-root_dir = os.path.dirname(os.path.dirname(current_dir))
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
 
-# 将项目根目录添加到 Python 路径
-if root_dir not in sys.path:
-    sys.path.insert(0, root_dir)
+# 添加项目根目录到 Python 路径
+sys.path.insert(0, project_root)
 
-try:
-    from ui.main_window import MainWindow
-except ImportError as e:
-    print(f"Current directory: {os.getcwd()}")
-    print(f"Python path: {sys.path}")
-    print(f"Directory contents: {os.listdir(root_dir)}")
-    raise e
+# 导入
+from ui.main_window import MainWindow
+
 
 class TestButtonStability(unittest.TestCase):
-    """Test all buttons to ensure they don't crash the application"""
-    
     @classmethod
     def setUpClass(cls):
-        """Create the application once for all tests"""
         cls.app = QApplication([])
 
     def setUp(self):
-        """Create a fresh window for each test"""
         self.window = MainWindow()
 
     @patch('PyQt5.QtWidgets.QFileDialog.getOpenFileName')
     @patch('PyQt5.QtWidgets.QFileDialog.getSaveFileName')
     @patch('PyQt5.QtWidgets.QColorDialog.getColor')
     def test_all_buttons(self, mock_color_dialog, mock_save_dialog, mock_open_dialog):
-        """Test clicking all buttons in the application"""
-        # 模拟对话框返回值
-        mock_open_dialog.return_value = ('', '')  # (文件路径, 文件类型)
+        mock_open_dialog.return_value = ('', '')
         mock_save_dialog.return_value = ('', '')
         mock_color_dialog.return_value = QColor(Qt.red)
 
