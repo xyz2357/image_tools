@@ -7,13 +7,22 @@ from PyQt5.QtGui import QColor
 import sys
 import os
 
-# 添加项目根目录到 Python 路径
+# 获取当前文件的目录
 current_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(current_dir)))
-sys.path.insert(0, project_root)
+# 获取项目根目录
+root_dir = os.path.dirname(os.path.dirname(current_dir))
 
-from ui.main_window import MainWindow
+# 将项目根目录添加到 Python 路径
+if root_dir not in sys.path:
+    sys.path.insert(0, root_dir)
 
+try:
+    from ui.main_window import MainWindow
+except ImportError as e:
+    print(f"Current directory: {os.getcwd()}")
+    print(f"Python path: {sys.path}")
+    print(f"Directory contents: {os.listdir(root_dir)}")
+    raise e
 
 class TestButtonStability(unittest.TestCase):
     """Test all buttons to ensure they don't crash the application"""
