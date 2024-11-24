@@ -9,7 +9,7 @@ from config.settings import Settings
 from utils.shortcut_utils import create_shortcut
 
 
-class ImageTool(QMainWindow):
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -84,7 +84,7 @@ class ImageTool(QMainWindow):
 
 def runMainWindow():
     app = QApplication(sys.argv)
-    ex = ImageTool()
+    ex = MainWindow()
     ex.show()
     sys.exit(app.exec_())
 
