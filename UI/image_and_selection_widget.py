@@ -79,27 +79,44 @@ class ImageAndSelectionWidget(QWidget):
         layout.addWidget(self.scrollArea)
 
         # Control buttons
-        self.openImageButton = QPushButton(Settings.Image.Buttons.OPEN, self)
+        self.openImageButton = QPushButton(
+            Settings.get_button_text_with_shortcut(Settings.ButtonText.File.OPEN),
+            self
+        )
         self.openImageButton.clicked.connect(self._openImage)
+        self.openImageButton.setFixedHeight(Settings.Common.Sizes.BUTTON_HEIGHT)
         layout.addWidget(self.openImageButton)
 
-        self.saveButton = QPushButton(Settings.Image.Buttons.SAVE, self)
+        self.saveButton = QPushButton(
+            Settings.get_button_text_with_shortcut(Settings.ButtonText.File.SAVE),
+            self
+        )
         self.saveButton.clicked.connect(self._saveImage)
+        self.saveButton.setFixedHeight(Settings.Common.Sizes.BUTTON_HEIGHT)
         layout.addWidget(self.saveButton)
 
-        self.undoButton = QPushButton(Settings.Image.Buttons.UNDO, self)
+        self.undoButton = QPushButton(
+            Settings.get_button_text_with_shortcut(Settings.ButtonText.Edit.UNDO),
+            self
+        )
         self.undoButton.clicked.connect(self._undo)
+        self.undoButton.setFixedHeight(Settings.Common.Sizes.BUTTON_HEIGHT)
         layout.addWidget(self.undoButton)
 
-        self.redoButton = QPushButton(Settings.Image.Buttons.REDO, self)
+        self.redoButton = QPushButton(
+            Settings.get_button_text_with_shortcut(Settings.ButtonText.Edit.REDO),
+            self
+        )
         self.redoButton.clicked.connect(self._redo)
+        self.redoButton.setFixedHeight(Settings.Common.Sizes.BUTTON_HEIGHT)
         layout.addWidget(self.redoButton)
 
         self.toggleSelectionModeButton = QPushButton(
-            Settings.Image.Buttons.TOGGLE_MODE.format(Settings.Image.Selection.MODES['RECT']), 
+            Settings.get_button_text_with_shortcut(Settings.ButtonText.Edit.TOGGLE_MODE).format(Settings.Image.Selection.MODES[self.label.mode]),
             self
         )
         self.toggleSelectionModeButton.clicked.connect(self._toggleSelectionMode)
+        self.toggleSelectionModeButton.setFixedHeight(Settings.Common.Sizes.BUTTON_HEIGHT)
         layout.addWidget(self.toggleSelectionModeButton)
 
         self.setLayout(layout)
@@ -147,7 +164,7 @@ class ImageAndSelectionWidget(QWidget):
     def _toggleSelectionMode(self):
         self.label.toggleMode()
         self.toggleSelectionModeButton.setText(
-            Settings.Image.Buttons.TOGGLE_MODE.format(Settings.Image.Selection.MODES[self.label.mode])
+            Settings.get_button_text_with_shortcut(Settings.ButtonText.Edit.TOGGLE_MODE).format(Settings.Image.Selection.MODES[self.label.mode])
         )
 
     def getImage(self):

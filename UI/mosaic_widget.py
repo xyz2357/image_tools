@@ -20,7 +20,6 @@ class MosaicWidget(QWidget):
     def _initUI(self):
         """Initialize the user interface"""
         layout = QVBoxLayout()
-        # 设置布局的大小约束为最小化
         layout.setSizeConstraint(QVBoxLayout.SetMinAndMaxSize)
         
         # Mosaic size label
@@ -38,12 +37,20 @@ class MosaicWidget(QWidget):
         layout.addWidget(self.sizeSlider)
 
         # Apply mosaic button
-        self.applyMosaicButton = QPushButton(Settings.Mosaic.BUTTON_TEXT, self)
+        self.applyMosaicButton = QPushButton(
+            Settings.get_button_text_with_shortcut(Settings.ButtonText.Tools.APPLY_MOSAIC),
+            self
+        )
         self.applyMosaicButton.clicked.connect(self.applyMosaic)
         self.applyMosaicButton.setFixedHeight(Settings.Common.Sizes.BUTTON_HEIGHT)
         layout.addWidget(self.applyMosaicButton)
 
         self.setLayout(layout)
+
+    def _changeMosaicSize(self, value):
+        """Update mosaic size based on slider value"""
+        self.mosaicSize = value * Settings.Mosaic.SIZE_MULTIPLIER
+        self.sizeLabel.setText(Settings.Mosaic.SIZE_LABEL_TEXT.format(self.mosaicSize))
 
     def applyMosaic(self):
         """Apply mosaic effect to the selected area"""
@@ -60,8 +67,3 @@ class MosaicWidget(QWidget):
             # Convert back to QPixmap and update image
             result_pixmap = pil_image_to_qimage_with_alpha(pil_image)
             self.image_and_selection_source.setImage(QPixmap.fromImage(result_pixmap))
-
-    def _changeMosaicSize(self, value):
-        """Update mosaic size based on slider value"""
-        self.mosaicSize = value * Settings.Mosaic.SIZE_MULTIPLIER
-        self.sizeLabel.setText(Settings.Mosaic.SIZE_LABEL_TEXT.format(self.mosaicSize))

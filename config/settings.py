@@ -10,16 +10,39 @@ class CommonWidgetSettings:
         LABEL_HEIGHT = 20
 
 
-class MosaicWidgetSettings:
-    """Settings for mosaic tool"""
-    MOSAIC_SIZE = {
-        'MIN': 1,
-        'MAX': 10,
-        'DEFAULT': 20
-    }
-    SIZE_MULTIPLIER = 5
-    SIZE_LABEL_TEXT = "Mosaic Size: {}"
-    BUTTON_TEXT = "Apply Mosaic"
+class ShortcutSettings:
+    """Centralized shortcut definitions"""
+    # File operations 
+    class File:
+        OPEN = "Ctrl+O"
+        SAVE = "Ctrl+S"
+    
+    # Edit operations
+    class Edit:
+        UNDO = "Ctrl+Z"
+        REDO = "Ctrl+Shift+Z"
+        TOGGLE_SELECT = "Tab"
+
+    # Tool operations
+    class Tools:
+        APPLY_TEXT = None
+        APPLY_MOSAIC = "Ctrl+M"
+
+
+class ButtonTextSettings:
+    """Button text settings with optional shortcuts"""
+    class File:
+        OPEN = ("Open Image", ShortcutSettings.File.OPEN)
+        SAVE = ("Save Image", ShortcutSettings.File.SAVE)
+    
+    class Edit:
+        UNDO = ("Undo", ShortcutSettings.Edit.UNDO)
+        REDO = ("Redo", ShortcutSettings.Edit.REDO)
+        TOGGLE_MODE = ("Toggle Selection Mode - Current: {}", ShortcutSettings.Edit.TOGGLE_SELECT)
+    
+    class Tools:
+        APPLY_TEXT = ("Add Text", ShortcutSettings.Tools.APPLY_TEXT)
+        APPLY_MOSAIC = ("Apply Mosaic", ShortcutSettings.Tools.APPLY_MOSAIC)
 
 
 class TextWidgetSettings:
@@ -52,7 +75,17 @@ class TextWidgetSettings:
     }
     ANGLE_TICK_INTERVAL = 10
     ANGLE_CONTAINER_SIZE = (300, 70)
-    BUTTON_TEXT = "Add Text"
+
+
+class MosaicWidgetSettings:
+    """Settings for mosaic tool"""
+    MOSAIC_SIZE = {
+        'MIN': 1,
+        'MAX': 10,
+        'DEFAULT': 20
+    }
+    SIZE_MULTIPLIER = 5
+    SIZE_LABEL_TEXT = "Mosaic Size: {}"
 
 
 class ImageSelectionWidgetSettings:
@@ -71,29 +104,6 @@ class ImageSelectionWidgetSettings:
         IMAGE_FILTER = "Images (*.png *.jpg *.jpeg)"
         SAVE_FILTER = "JPG Files (*.jpg *.jpeg);;PNG Files (*.png);;All Files (*)"
 
-    class Buttons:
-        OPEN = "Open Image"
-        SAVE = "Save Image"
-        UNDO = "Undo"
-        REDO = "Redo"
-        TOGGLE_MODE = "Toggle Selection Mode - Current: {}"
-
-
-class ShortcutSettings:
-    """Keyboard shortcuts"""
-    class File:
-        OPEN = "Ctrl+O"
-        SAVE = "Ctrl+S"
-    
-    class Edit:
-        UNDO = "Ctrl+Z"
-        REDO = "Ctrl+Shift+Z"
-    
-    class Tools:
-        TOGGLE_SELECT = "Tab"
-        APPLY_TEXT = "Ctrl+T"
-        APPLY_MOSAIC = "Ctrl+M"
-
 
 class Settings:
     """Settings manager that provides access to all settings"""
@@ -101,4 +111,20 @@ class Settings:
     Text = TextWidgetSettings
     Mosaic = MosaicWidgetSettings
     Image = ImageSelectionWidgetSettings
-    Shortcut = ShortcutSettings 
+    Shortcut = ShortcutSettings
+    ButtonText = ButtonTextSettings
+
+    @staticmethod
+    def get_button_text_with_shortcut(text_and_shortcut: tuple) -> str:
+        """Get button text with shortcut if available
+        
+        Args:
+            text_and_shortcut: Tuple of (button_text, shortcut)
+            
+        Returns:
+            str: Button text, optionally with shortcut in format "Button Text (Ctrl+X)"
+        """
+        text, shortcut = text_and_shortcut
+        if shortcut:  # 只有当快捷键不为空时才添加
+            return f"{text} ({shortcut})"
+        return text

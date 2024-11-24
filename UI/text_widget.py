@@ -138,10 +138,13 @@ class TextWidget(QWidget):
         layout.addLayout(angleLayout)
 
         # Apply text button
-        self.applyTextButton = QPushButton(Settings.Text.BUTTON_TEXT, self)
+        self.applyTextButton = QPushButton(
+            Settings.get_button_text_with_shortcut(Settings.ButtonText.Tools.APPLY_TEXT),
+            self
+        )
         self.applyTextButton.clicked.connect(self.applyText)
-        layout.addWidget(self.applyTextButton)
         self.applyTextButton.setFixedHeight(Settings.Common.Sizes.BUTTON_HEIGHT)
+        layout.addWidget(self.applyTextButton)
 
         self.setLayout(layout)
 
