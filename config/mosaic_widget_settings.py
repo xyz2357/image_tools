@@ -1,0 +1,13 @@
+# Mosaic size settings
+MOSAIC_SIZE_DEFAULT = 15
+MOSAIC_SIZE_MIN = 1
+MOSAIC_SIZE_MAX = 8
+MOSAIC_SIZE_MULTIPLIER = 5
+
+# Widget settings
+WIDGET_MAX_HEIGHT = 200
+BUTTON_HEIGHT = 100
+
+# UI text
+APPLY_BUTTON_TEXT = "Apply Mosaic"
+SIZE_LABEL_TEXT = "Mosaic Size: {}" 

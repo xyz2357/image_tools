@@ -7,5 +7,5 @@ FONT_LIST = {
     "SimSun",          # 宋体
     "KaiTi",           # 楷体
     "FangSong",        # 仿宋
-    # 添加更多你想要的字体
+    # Add more fonts here
 } 

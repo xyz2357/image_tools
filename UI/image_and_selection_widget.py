@@ -1,7 +1,9 @@
 import sys
 from PyQt5.QtCore import Qt, QPoint
-from PyQt5.QtWidgets import QVBoxLayout, QWidget, QPushButton, QFileDialog, QScrollArea, QSlider, QLabel, QApplication
+from PyQt5.QtWidgets import (QVBoxLayout, QWidget, QPushButton, QFileDialog, 
+                           QScrollArea, QSlider, QLabel, QApplication)
 from PyQt5.QtGui import QPixmap, QPainter, QColor, QPen, QPolygon
+from config.image_and_selection_widget_settings import *
 
 
 # Use mouse to select a rectangle or lasso region
@@ -11,14 +13,11 @@ class SelectableLabel(QLabel):
         self.selection_polygon = QPolygon()
         self.start_point = QPoint()
         self.is_selecting = False
-        self.mode = "Rect"  # Default mode is rectangle
+        self.mode = RECT_MODE  # Default mode is rectangle
 
     def toggleMode(self):
-        # Toggle between 'rect' and 'lasso'
-        if self.mode == "Rect":
-            self.mode = "Lasso"
-        else:
-            self.mode = "Rect"
+        # Toggle between rectangle and lasso modes
+        self.mode = LASSO_MODE if self.mode == RECT_MODE else RECT_MODE
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -30,7 +29,7 @@ class SelectableLabel(QLabel):
 
     def mouseMoveEvent(self, event):
         if self.is_selecting:
-            if self.mode == "Rect":
+            if self.mode == RECT_MODE:
                 # Calculate the rectangle points based on start and current points
                 current_point = event.pos()
                 self.selection_polygon = QPolygon([
@@ -39,7 +38,7 @@ class SelectableLabel(QLabel):
                     current_point,
                     QPoint(self.start_point.x(), current_point.y())
                 ])
-            elif self.mode == "Lasso":
+            elif self.mode == LASSO_MODE:
                 # Append the current point to create a free-form selection
                 self.selection_polygon.append(event.pos())
             self.update()
@@ -53,7 +52,8 @@ class SelectableLabel(QLabel):
         super().paintEvent(event)
         if not self.selection_polygon.isEmpty():
             painter = QPainter(self)
-            painter.setPen(QPen(QColor(255, 0, 0), 2, Qt.SolidLine))
+            pen_color = QColor(*SELECTION_PEN_COLOR)
+            painter.setPen(QPen(pen_color, SELECTION_PEN_WIDTH, Qt.SolidLine))
             painter.drawPolygon(self.selection_polygon)
 
 if __name__ == "__main__":
@@ -75,15 +75,15 @@ if __name__ == "__main__":
 class ImageAndSelectionWidget(QWidget):
     def __init__(self):
         super().__init__()
-        self._imageHistory = []  # store history images
-        self._redoHistory = []   # store redo history
+        self._imageHistory = []  # Store history images
+        self._redoHistory = []   # Store redo history
         self._initUI()
         self.show()
 
     def _initUI(self):
-        layout = QVBoxLayout()  # main layout: vertical
+        layout = QVBoxLayout()  # Main layout: vertical
 
-        # A QScrollArea to show image
+        # Scrollable image area
         self.scrollArea = QScrollArea(self)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -93,27 +93,27 @@ class ImageAndSelectionWidget(QWidget):
         self.scrollArea.setWidget(self.label)
         layout.addWidget(self.scrollArea)
 
-        # A button to open image
-        self.openImageButton = QPushButton("Open Image", self)
+        # Control buttons
+        self.openImageButton = QPushButton(OPEN_BUTTON_TEXT, self)
         self.openImageButton.clicked.connect(self._openImage)
         layout.addWidget(self.openImageButton)
 
-        # Ad button to save image
-        self.saveButton = QPushButton("Save Image", self)
+        self.saveButton = QPushButton(SAVE_BUTTON_TEXT, self)
         self.saveButton.clicked.connect(self._saveImage)
         layout.addWidget(self.saveButton)
 
-        # A button to undo
-        self.undoButton = QPushButton("Undo", self)
+        self.undoButton = QPushButton(UNDO_BUTTON_TEXT, self)
         self.undoButton.clicked.connect(self._undo)
         layout.addWidget(self.undoButton)
 
-        # Add redo button
-        self.redoButton = QPushButton("Redo", self)
+        self.redoButton = QPushButton(REDO_BUTTON_TEXT, self)
         self.redoButton.clicked.connect(self._redo)
         layout.addWidget(self.redoButton)
 
-        self.toggleSelectionModeButton = QPushButton("ToggleSelectionMode (Current: %s)" %(self.label.mode), self)
+        self.toggleSelectionModeButton = QPushButton(
+            TOGGLE_MODE_TEXT.format(self.label.mode), 
+            self
+        )
         self.toggleSelectionModeButton.clicked.connect(self._toggleSelectionMode)
         layout.addWidget(self.toggleSelectionModeButton)
 
@@ -138,22 +138,33 @@ class ImageAndSelectionWidget(QWidget):
             self._imageHistory.append(self.label.pixmap().copy())
 
     def _openImage(self):
-        imagePath, _ = QFileDialog.getOpenFileName(self, "Open Image", "", "Images (*.png *.jpg *.jpeg)")
+        imagePath, _ = QFileDialog.getOpenFileName(
+            self, 
+            OPEN_DIALOG_TITLE, 
+            "", 
+            IMAGE_FILTER
+        )
         if imagePath:
             pixmap = QPixmap(imagePath)
             self.setImage(pixmap)
 
     def _saveImage(self):
-        # TODO: (1) default name, (2) default format
         if self.label.pixmap():
-            filePath, _ = QFileDialog.getSaveFileName(self, "Save Image", "", "JPG Files (*.jpg *.jpeg);;PNG Files (*.png);;All Files (*)")
+            filePath, _ = QFileDialog.getSaveFileName(
+                self, 
+                SAVE_DIALOG_TITLE, 
+                "", 
+                SAVE_FILTERS
+            )
             if filePath:
                 self.label.pixmap().save(filePath)
 
     def _toggleSelectionMode(self):
         self.label.toggleMode()
-        self.toggleSelectionModeButton.setText("ToggleSelectionMode (Current: %s)" %(self.label.mode))
- 
+        self.toggleSelectionModeButton.setText(
+            TOGGLE_MODE_TEXT.format(self.label.mode)
+        )
+
     def getImage(self):
         return self.label.pixmap()
     

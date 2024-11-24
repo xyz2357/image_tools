@@ -2,8 +2,9 @@ from PyQt5.QtWidgets import (QLabel, QVBoxLayout, QWidget, QPushButton,
                            QSlider, QLineEdit, QColorDialog, QHBoxLayout,
                            QSpinBox, QFontComboBox)
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap, QPainter, QFont, QColor, QPainterPath, QFontDatabase
+from PyQt5.QtGui import QPixmap, QPainter, QFont, QFontDatabase, QColor
 from config.fonts import FONT_LIST
+from config.text_widget_settings import *  # Import all settings
 
 
 class CustomFontComboBox(QFontComboBox):
@@ -13,20 +14,20 @@ class CustomFontComboBox(QFontComboBox):
         self._filterFonts()
     
     def _filterFonts(self):
-        # 移除所有当前项
+        # Remove all current items
         self.clear()
         
-        # 获取所有可用字体
+        # Get all available fonts
         font_db = QFontDatabase()
         available_fonts = set(font_db.families())
         
-        # 只保留允许的字体
+        # Keep only allowed fonts
         filtered_fonts = self.allowed_fonts.intersection(available_fonts)
         
-        # 临时禁用信号以避免多次触发更新
+        # Temporarily block signals to avoid multiple updates
         self.blockSignals(True)
         
-        # 为每个过滤后的字体添加项
+        # Add items for each filtered font
         for font in sorted(filtered_fonts):
             self.addItem(font)
             
@@ -34,68 +35,60 @@ class CustomFontComboBox(QFontComboBox):
 
 
 class TextWidget(QWidget):
-    # 配置允许显示的字体列表
     ALLOWED_FONTS = FONT_LIST
 
     def __init__(self, image_and_selection_source):
         super().__init__()
-        self.textSize = 20
-        self.textColor = QColor(0, 0, 0)
+        self.textSize = TEXT_SIZE_DEFAULT
+        self.textColor = QColor(*DEFAULT_TEXT_COLOR)
         self.currentFont = QFont()
-        self.textAngle = 0  # 默认角度为0
+        self.textAngle = TEXT_ANGLE_DEFAULT
         self.image_and_selection_source = image_and_selection_source
         self._initUI()
 
     def _initUI(self):
         layout = QVBoxLayout()
 
-        # 文本输入框
+        # Text input box
         self.textInput = QLineEdit(self)
-        self.textInput.setPlaceholderText("Enter text here...")
+        self.textInput.setPlaceholderText(PLACEHOLDER_TEXT)
         layout.addWidget(self.textInput)
 
-        # 使用自定义字体选择框
+        # Font selection
         fontLayout = QHBoxLayout()
         self.fontComboBox = CustomFontComboBox(self.ALLOWED_FONTS, self)
         self.fontComboBox.currentFontChanged.connect(self._changeFont)
-        
-        # 如果有字体，设置第一个为默认字体
         if self.fontComboBox.count() > 0:
             self.currentFont = self.fontComboBox.currentFont()
-            
-        fontLayout.addWidget(QLabel("Font:"))
+        fontLayout.addWidget(QLabel(FONT_LABEL))
         fontLayout.addWidget(self.fontComboBox)
         layout.addLayout(fontLayout)
 
-        # 颜色选择区域
+        # Color selection
         colorLayout = QHBoxLayout()
-        self.colorButton = QPushButton("Choose Color", self)
+        self.colorButton = QPushButton(COLOR_BUTTON_TEXT, self)
         self.colorButton.clicked.connect(self._chooseColor)
-        
         self.colorPreview = QLabel()
-        self.colorPreview.setFixedSize(20, 20)
+        self.colorPreview.setFixedSize(COLOR_PREVIEW_SIZE, COLOR_PREVIEW_SIZE)
         self._updateColorPreview()
-        
         colorLayout.addWidget(self.colorButton)
         colorLayout.addWidget(self.colorPreview)
         layout.addLayout(colorLayout)
 
-        # 文字大小控制
+        # Text size control
         sizeLayout = QHBoxLayout()
-        self.sizeLabel = QLabel("Text Size:", self)
-        
+        self.sizeLabel = QLabel(TEXT_SIZE_LABEL, self)
         self.sizeSlider = QSlider(Qt.Horizontal, self)
-        self.sizeSlider.setMinimum(8)
-        self.sizeSlider.setMaximum(72)
+        self.sizeSlider.setMinimum(TEXT_SIZE_MIN)
+        self.sizeSlider.setMaximum(TEXT_SIZE_MAX)
         self.sizeSlider.setValue(self.textSize)
         
         self.sizeSpinBox = QSpinBox(self)
-        self.sizeSpinBox.setMinimum(8)
-        self.sizeSpinBox.setMaximum(72)
+        self.sizeSpinBox.setMinimum(TEXT_SIZE_MIN)
+        self.sizeSpinBox.setMaximum(TEXT_SIZE_MAX)
         self.sizeSpinBox.setValue(self.textSize)
-        self.sizeSpinBox.setFixedWidth(50)  # 设置固定宽度
+        self.sizeSpinBox.setFixedWidth(SPINBOX_WIDTH)
         
-        # 连接信号
         self.sizeSlider.valueChanged.connect(self._changeTextSize)
         self.sizeSpinBox.valueChanged.connect(self._changeTextSize)
         
@@ -104,38 +97,37 @@ class TextWidget(QWidget):
         sizeLayout.addWidget(self.sizeSpinBox)
         layout.addLayout(sizeLayout)
 
-        # 角度控制
+        # Angle control
         angleLayout = QHBoxLayout()
         self.anglePreview = QLabel()
-        self.anglePreview.setFixedSize(60, 60)
+        self.anglePreview.setFixedSize(PREVIEW_SIZE, PREVIEW_SIZE)
         self._updateAnglePreview()
         
         angleContainer = QWidget()
-        angleContainer.setFixedSize(300, 70)
+        angleContainer.setFixedSize(*ANGLE_CONTAINER_SIZE)
         
         angleControlLayout = QVBoxLayout(angleContainer)
         angleControlLayout.setContentsMargins(0, 0, 0, 0)
         
-        # 角度控制的水平布局
         angleSliderLayout = QHBoxLayout()
         angleSliderLayout.setSpacing(5)
         
-        self.angleLabel = QLabel("Text Angle:", self)
+        self.angleLabel = QLabel(TEXT_ANGLE_LABEL, self)
         self.angleSlider = QSlider(Qt.Horizontal)
-        self.angleSlider.setMinimum(-90)
-        self.angleSlider.setMaximum(90)
-        self.angleSlider.setValue(0)
+        self.angleSlider.setMinimum(TEXT_ANGLE_MIN)
+        self.angleSlider.setMaximum(TEXT_ANGLE_MAX)
+        self.angleSlider.setValue(TEXT_ANGLE_DEFAULT)
         self.angleSlider.setTickPosition(QSlider.TicksBelow)
-        self.angleSlider.setTickInterval(15)
+        self.angleSlider.setTickInterval(TEXT_ANGLE_TICK_INTERVAL)
         
         self.angleSpinBox = QSpinBox(self)
-        self.angleSpinBox.setMinimum(-90)
-        self.angleSpinBox.setMaximum(90)
-        self.angleSpinBox.setValue(0)
-        self.angleSpinBox.setFixedWidth(50)
+        self.angleSpinBox.setMinimum(TEXT_ANGLE_MIN)
+        self.angleSpinBox.setMaximum(TEXT_ANGLE_MAX)
+        self.angleSpinBox.setValue(TEXT_ANGLE_DEFAULT)
+        self.angleSpinBox.setFixedWidth(SPINBOX_WIDTH)
         self.angleSpinBox.setSuffix("°")
         
-        # 连接信号
+        # Connect signals
         self.angleSlider.valueChanged.connect(self._changeAngle)
         self.angleSpinBox.valueChanged.connect(self._changeAngle)
         
@@ -149,17 +141,17 @@ class TextWidget(QWidget):
         angleLayout.addWidget(angleContainer)
         layout.addLayout(angleLayout)
 
-        # 应用文字按钮
-        self.applyTextButton = QPushButton("Add Text", self)
+        # Apply text button
+        self.applyTextButton = QPushButton(ADD_TEXT_BUTTON, self)
         self.applyTextButton.clicked.connect(self.applyText)
         layout.addWidget(self.applyTextButton)
-        self.applyTextButton.setFixedHeight(100)
+        self.applyTextButton.setFixedHeight(BUTTON_HEIGHT)
 
         self.setLayout(layout)
         self.setMaximumHeight(300)
 
     def _updateColorPreview(self):
-        preview = QPixmap(20, 20)
+        preview = QPixmap(COLOR_PREVIEW_SIZE, COLOR_PREVIEW_SIZE)
         preview.fill(self.textColor)
         self.colorPreview.setPixmap(preview)
 
@@ -173,38 +165,38 @@ class TextWidget(QWidget):
         self.currentFont = font
 
     def _changeTextSize(self, value):
-        """更新文字大小"""
+        """Update text size"""
         self.textSize = value
-        # 同步更新另一个控件
+        # Sync the other control
         if self.sender() == self.sizeSlider:
             self.sizeSpinBox.setValue(value)
         else:
             self.sizeSlider.setValue(value)
 
     def _updateAnglePreview(self):
-        """更新角度预览图"""
-        preview = QPixmap(60, 60)
+        """Update angle preview"""
+        preview = QPixmap(PREVIEW_SIZE, PREVIEW_SIZE)
         preview.fill(Qt.white)
         
         painter = QPainter(preview)
         painter.setRenderHint(QPainter.Antialiasing)
         
-        # 绘制边框
+        # Draw border
         painter.setPen(Qt.lightGray)
-        painter.drawRect(0, 0, 59, 59)
+        painter.drawRect(0, 0, PREVIEW_SIZE-1, PREVIEW_SIZE-1)
         
-        # 绘制文字
+        # Draw text
         painter.setPen(self.textColor)
         font = QFont(self.currentFont)
-        font.setPointSize(12)  # 预览用小一点的字号
+        font.setPointSize(PREVIEW_FONT_SIZE)  # Smaller font size for preview
         painter.setFont(font)
         
-        # 移动到中心点并旋转
-        painter.translate(30, 30)
+        # Move to center point and rotate
+        painter.translate(PREVIEW_SIZE/2, PREVIEW_SIZE/2)
         painter.rotate(self.textAngle)
         
-        # 绘制示例文字
-        text = "Aa"
+        # Draw sample text
+        text = PREVIEW_SAMPLE_TEXT
         text_width = painter.fontMetrics().horizontalAdvance(text)
         text_height = painter.fontMetrics().height()
         painter.drawText(int(-text_width/2), int(text_height/4), text)
@@ -213,9 +205,9 @@ class TextWidget(QWidget):
         self.anglePreview.setPixmap(preview)
 
     def _changeAngle(self, value):
-        """更新文字角度"""
+        """Update text angle"""
         self.textAngle = value
-        # 同步更新另一个控件
+        # Sync the other control
         if self.sender() == self.angleSlider:
             self.angleSpinBox.setValue(value)
         else:
@@ -237,28 +229,28 @@ class TextWidget(QWidget):
             painter.setFont(font)
             painter.setPen(self.textColor)
 
-            # 计算选区中心点
+            # Calculate selection center point
             x_coords = [p[0] for p in selection_points]
             y_coords = [p[1] for p in selection_points]
             center_x = (min(x_coords) + max(x_coords)) / 2
             center_y = (min(y_coords) + max(y_coords)) / 2
 
-            # 保存当前画笔状态
+            # Save current painter state
             painter.save()
             
-            # 移动到中心点并旋转
+            # Move to center point and rotate
             painter.translate(center_x, center_y)
             painter.rotate(self.textAngle)
             
-            # 计算文本尺寸
+            # Calculate text dimensions
             metrics = painter.fontMetrics()
             text_width = metrics.horizontalAdvance(text)
             text_height = metrics.height()
             
-            # 绘制文本（从中心点偏移）
+            # Draw text (offset from center point)
             painter.drawText(int(-text_width/2), int(text_height/4), text)
             
-            # 恢复画笔状态
+            # Restore painter state
             painter.restore()
             painter.end()
 
