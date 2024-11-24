@@ -5,12 +5,14 @@ from PyQt5.QtTest import QTest
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
 import sys
-from pathlib import Path
+import os
 
 # 添加项目根目录到 Python 路径
-sys.path.append(str(Path(__file__).parent.parent.parent))
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(current_dir)))
+sys.path.insert(0, project_root)
 
-from ui.main_window import runMainWindow, MainWindow
+from ui.main_window import MainWindow
 
 
 class TestButtonStability(unittest.TestCase):
