@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QHBoxLayout,
 
 from UI.ImageAndSelectionWidget import ImageAndSelectionWidget
 from UI.MosaicWidget import MosaicWidget
+from UI.TextWidget import TextWidget
 
 
 class ImageTool(QMainWindow):
@@ -30,6 +31,9 @@ class ImageTool(QMainWindow):
 
         self.mosaicWidget = MosaicWidget(self.imageAndSelectionWidget)
         self.tabs.addTab(self.mosaicWidget, "Add Mosaic")
+
+        self.textWidget = TextWidget(self.imageAndSelectionWidget)
+        self.tabs.addTab(self.textWidget, "Add Text")
 
 
 def runMainWindow():

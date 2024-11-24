@@ -4,15 +4,15 @@ from PyQt5.QtGui import QPixmap
 from UI.SelectableLabel import SelectableLabel
 
 # A main image widget to open, undo and save widget
-# TODO: redo
 # TODO: zooming?
 # TODO: connect signal here
 class ImageAndSelectionWidget(QWidget):
     def __init__(self):
         super().__init__()
         self._imageHistory = []  # store history images
+        self._redoHistory = []   # store redo history
         self._initUI()
-        self.show()  # TODO: if inherit, not show
+        self.show()
 
     def _initUI(self):
         layout = QVBoxLayout()  # main layout: vertical
@@ -42,6 +42,11 @@ class ImageAndSelectionWidget(QWidget):
         self.undoButton.clicked.connect(self._undo)
         layout.addWidget(self.undoButton)
 
+        # Add redo button
+        self.redoButton = QPushButton("Redo", self)
+        self.redoButton.clicked.connect(self._redo)
+        layout.addWidget(self.redoButton)
+
         self.toggleSelectionModeButton = QPushButton("ToggleSelectionMode (Current: %s)" %(self.label.mode), self)
         self.toggleSelectionModeButton.clicked.connect(self._toggleSelectionMode)
         layout.addWidget(self.toggleSelectionModeButton)
@@ -50,9 +55,17 @@ class ImageAndSelectionWidget(QWidget):
 
     def _undo(self):
         if self._imageHistory:
-            # pop history state
+            if self.label.pixmap():
+                self._redoHistory.append(self.label.pixmap().copy())
             previous_pixmap = self._imageHistory.pop()
             self.label.setPixmap(previous_pixmap)
+
+    def _redo(self):
+        if self._redoHistory:
+            if self.label.pixmap():
+                self._imageHistory.append(self.label.pixmap().copy())
+            next_pixmap = self._redoHistory.pop()
+            self.label.setPixmap(next_pixmap)
 
     def _addToUndo(self):
         if self.label.pixmap():
@@ -80,8 +93,9 @@ class ImageAndSelectionWidget(QWidget):
     
     def setImage(self, pixmap):
         self._addToUndo()
+        self._redoHistory.clear()  # clear redo history when new image is set
         self.label.setPixmap(pixmap)
-        self.label.adjustSize()  # adjust UI size to fit image  # TODO: shall we?
+        self.label.adjustSize()
 
     def getSelectionPolygon(self, to_points=True):
         if not to_points:
