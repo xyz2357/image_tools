@@ -1,9 +1,10 @@
 from PyQt5.QtWidgets import (QLabel, QVBoxLayout, QWidget, QPushButton, 
                            QSlider, QLineEdit, QColorDialog, QHBoxLayout,
-                           QSpinBox, QFontComboBox)
+                           QSpinBox, QFontComboBox, QApplication)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QPainter, QFont, QFontDatabase, QColor
 from config.settings import Settings
+import sys
 
 
 class CustomFontComboBox(QFontComboBox):
@@ -253,14 +254,3 @@ class TextWidget(QWidget):
             painter.end()
 
             self.image_and_selection_source.setImage(new_pixmap) 
-
-
-def runTextWidget():
-    app = QApplication(sys.argv)
-    ex = TextWidget()
-    ex.show()
-    sys.exit(app.exec_())
-
-
-if __name__ == "__main__":
-    runTextWidget()
