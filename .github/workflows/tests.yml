@@ -24,19 +24,13 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y \
-          libxcb1 \
+          libegl1-mesa \
+          libxkbcommon-x11-0 \
           libxcb-icccm4 \
           libxcb-image0 \
           libxcb-keysyms1 \
           libxcb-randr0 \
-          libxcb-render-util0 \
-          libxcb-shape0 \
-          libxcb-xinerama0 \
-          libxcb-xkb1 \
-          libxkbcommon-x11-0 \
-          xvfb \
-          x11-utils \
-          libgl1-mesa-glx
+          libxcb-render-util0
 
     - name: Install dependencies
       run: |
@@ -50,9 +44,8 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
         
     - name: Test with pytest
+      env:
+        QT_QPA_PLATFORM: offscreen
+        PYTHONPATH: ${{ github.workspace }}
       run: |
-        export QT_DEBUG_PLUGINS=1
-        export DISPLAY=:99
-        Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-        sleep 3
-        xvfb-run -a pytest -v
+        pytest -v
