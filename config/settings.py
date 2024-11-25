@@ -27,7 +27,7 @@ class ShortcutSettings:
     class Tools:
         APPLY_TEXT = None
         APPLY_MOSAIC = "Ctrl+M"
-
+        APPLY_BLUR = "Ctrl+B"
 
 class ButtonTextSettings:
     """Button text settings with optional shortcuts"""
@@ -43,6 +43,7 @@ class ButtonTextSettings:
     class Tools:
         APPLY_TEXT = ("Add Text", ShortcutSettings.Tools.APPLY_TEXT)
         APPLY_MOSAIC = ("Apply Mosaic", ShortcutSettings.Tools.APPLY_MOSAIC)
+        APPLY_BLUR = ("Apply Blur", ShortcutSettings.Tools.APPLY_BLUR)
 
 
 class TextWidgetSettings:
@@ -114,6 +115,20 @@ class Settings:
     Shortcut = ShortcutSettings
     ButtonText = ButtonTextSettings
 
+    class Blur:
+        INTENSITY = {
+            'MIN': 5,
+            'MAX': 50,
+            'DEFAULT': 20
+        }
+        ANGLE = {
+            'MIN': 0,
+            'MAX': 180,
+            'DEFAULT': 90
+        }
+        INTENSITY_LABEL_TEXT = "Blur Intensity: {}"
+        ANGLE_LABEL_TEXT = "Blur Angle: {}°"
+
     @staticmethod
     def get_button_text_with_shortcut(text_and_shortcut: tuple) -> str:
         """Get button text with shortcut if available
@@ -125,6 +140,6 @@ class Settings:
             str: Button text, optionally with shortcut in format "Button Text (Ctrl+X)"
         """
         text, shortcut = text_and_shortcut
-        if shortcut:  # 只有当快捷键不为空时才添加
+        if shortcut:
             return f"{text} ({shortcut})"
         return text

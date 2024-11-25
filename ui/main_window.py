@@ -5,6 +5,7 @@ from PyQt5.QtCore import Qt
 from ui.image_and_selection_widget import ImageAndSelectionWidget
 from ui.mosaic_widget import MosaicWidget
 from ui.text_widget import TextWidget
+from ui.blur_widget import BlurWidget
 from config.settings import Settings
 from utils.shortcut_utils import create_shortcut
 
@@ -38,6 +39,9 @@ class MainWindow(QMainWindow):
 
         self.textWidget = TextWidget(self.imageAndSelectionWidget)
         self.tabs.addTab(self.textWidget, "Add Text")
+
+        self.blurWidget = BlurWidget(self.imageAndSelectionWidget)
+        self.tabs.addTab(self.blurWidget, "Add Blur")
 
     def initShortcuts(self):
         # File operations
