@@ -1,6 +1,6 @@
 # Image Tools
 
-A desktop application for basic image editing, including text overlay and mosaic effects.
+A desktop application for basic image editing, including text overlay, mosaic and motion blur effects.
 
 ## Features
 
@@ -8,6 +8,7 @@ A desktop application for basic image editing, including text overlay and mosaic
 - Rectangle/Lasso selection
 - Text overlay with customizable font, size, color, and angle
 - Mosaic effect
+- Motion blur effect with adjustable intensity and angle
 - Undo/Redo support
 - Keyboard shortcuts
 
@@ -40,6 +41,7 @@ run.bat
 - `Tab`: Toggle selection mode
 - `Ctrl+T`: Apply text
 - `Ctrl+M`: Apply mosaic
+- `Ctrl+B`: Apply motion blur
 
 ## Development
 
@@ -60,6 +62,7 @@ image_tools/
 │   ├── main_window.py     # Main application window
 │   ├── text_widget.py     # Text overlay tool widget
 │   ├── mosaic_widget.py   # Mosaic effect tool widget
+│   ├── blur_widget.py     # Motion blur tool widget
 │   └── image_and_selection_widget.py  # Image display and selection widget
 │
 ├── utils/                  # Utility functions
@@ -72,9 +75,6 @@ image_tools/
 │   └── ui/
 │       ├── __init__.py
 │       └── test_button_stability.py  # UI stability tests
-│
-├── .github/workflows/     # GitHub Actions configuration
-│   └── tests.yml         # Automated testing workflow
 │
 ├── requirements.txt       # Project dependencies
 ├── run.bat               # Windows startup script
@@ -89,7 +89,7 @@ Feel free to open issues or submit pull requests.
 
 # Image Tools
 
-一个用于基础图像编辑的桌面应用，支持添加文字和马赛克效果。
+一个用于基础图像编辑的桌面应用，支持添加文字、马赛克和运动模糊效果。
 
 ## 功能
 
@@ -97,6 +97,7 @@ Feel free to open issues or submit pull requests.
 - 矩形/套索选择
 - 可自定义字体、大小、颜色和角度的文字添加
 - 马赛克效果
+- 可调整强度和角度的运动模糊效果
 - 撤销/重做支持
 - 键盘快捷键
 
@@ -129,6 +130,7 @@ run.bat
 - `Tab`: 切换选择模式
 - `Ctrl+T`: 添加文字
 - `Ctrl+M`: 添加马赛克
+- `Ctrl+B`: 添加运动模糊
 
 ## 开发
 
@@ -149,6 +151,7 @@ image_tools/
 │   ├── main_window.py     # 主程序窗口
 │   ├── text_widget.py     # 文字工具组件
 │   ├── mosaic_widget.py   # 马赛克工具组件
+│   ├── blur_widget.py     # 运动模糊工具组件
 │   └── image_and_selection_widget.py  # 图像显示和选择组件
 │
 ├── utils/                  # 工具函数
@@ -161,9 +164,6 @@ image_tools/
 │   └── ui/
 │       ├── __init__.py
 │       └── test_button_stability.py  # 界面稳定性测试
-│
-├── .github/workflows/     # GitHub Actions 配置
-│   └── tests.yml         # 自动化测试工作流
 │
 ├── requirements.txt       # 项目依赖
 ├── run.bat               # Windows 启动脚本
