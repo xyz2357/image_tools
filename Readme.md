@@ -2,13 +2,26 @@
 
 A desktop application for basic image editing, including text overlay, mosaic and motion blur effects.
 
-## Features
+## Features & Examples
 
+### Text Overlay
+Add text with customizable font, size, color and rotation angle.
+
+![Text Overlay Example](docs/images/text_example.png)
+
+### Mosaic Effect
+Apply mosaic effect to selected areas.
+
+![Mosaic Effect Example](docs/images/mosaic_example.png)
+
+### Motion Blur
+Create dynamic motion blur effects with adjustable intensity and angle.
+
+![Motion Blur Example](docs/images/motion_blur_example.png)
+
+## Other Features
 - Image loading and saving
-- Rectangle/Lasso selection
-- Text overlay with customizable font, size, color, and angle
-- Mosaic effect
-- Motion blur effect with adjustable intensity and angle
+- Flexible rectangle and lasso selection tools
 - Undo/Redo support
 - Keyboard shortcuts
 
@@ -91,13 +104,26 @@ Feel free to open issues or submit pull requests.
 
 一个用于基础图像编辑的桌面应用，支持添加文字、马赛克和运动模糊效果。
 
-## 功能
+## 功能 & 示例
 
+### 文字添加
+添加文字，可自定义字体、大小、颜色和旋转角度。
+
+![文字添加示例](docs/images/text_example.png)
+
+### 马赛克效果
+对选中的区域应用马赛克效果。
+
+![马赛克效果示例](docs/images/mosaic_example.png)
+
+### 运动模糊
+创建动态运动模糊效果，可调整强度和角度。
+
+![运动模糊示例](docs/images/motion_blur_example.png)
+
+## 其他功能
 - 图像加载和保存
-- 矩形/套索选择
-- 可自定义字体、大小、颜色和角度的文字添加
-- 马赛克效果
-- 可调整强度和角度的运动模糊效果
+- 灵活的矩形和套索选择工具
 - 撤销/重做支持
 - 键盘快捷键
 
