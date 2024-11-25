@@ -20,10 +20,29 @@ from ui.main_window import MainWindow
 class TestButtonStability(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.app = QApplication([])
+        # 检查是否已经有 QApplication 实例
+        if not QApplication.instance():
+            cls.app = QApplication(sys.argv)
+        else:
+            cls.app = QApplication.instance()
+        
+        # 确保应用程序正确初始化
+        if not cls.app.thread():
+            cls.app.moveToThread(QApplication.instance().thread())
 
     def setUp(self):
         self.window = MainWindow()
+        self.window.show()
+
+    def tearDown(self):
+        self.window.close()
+        QTest.qWait(100)  # 等待窗口完全关闭
+
+    @classmethod
+    def tearDownClass(cls):
+        # 清理应用程序
+        if hasattr(cls, 'app'):
+            cls.app.quit()
 
     @patch('PyQt5.QtWidgets.QFileDialog.getOpenFileName')
     @patch('PyQt5.QtWidgets.QFileDialog.getSaveFileName')
