@@ -7,26 +7,26 @@ from PyQt5.QtTest import QTest
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
 
-# 获取项目根目录
+# Get project root directory
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
 
-# 添加项目根目录到 Python 路径
+# Add project root directory to Python path
 sys.path.insert(0, project_root)
 
-# 导入
+# Import
 from ui.main_window import MainWindow
 
 
 class TestButtonStability(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        # 检查是否已经有 QApplication 实例
+        # Check if QApplication instance already exists
         if not QApplication.instance():
             cls.app = QApplication(sys.argv)
         else:
             cls.app = QApplication.instance()
         
-        # 确保应用程序正确初始化
+        # Ensure application is properly initialized
         if not cls.app.thread():
             cls.app.moveToThread(QApplication.instance().thread())
 
@@ -36,11 +36,11 @@ class TestButtonStability(unittest.TestCase):
 
     def tearDown(self):
         self.window.close()
-        QTest.qWait(100)  # 等待窗口完全关闭
+        QTest.qWait(100)  # Wait for window to fully close
 
     @classmethod
     def tearDownClass(cls):
-        # 清理应用程序
+        # Clean up the application
         if hasattr(cls, 'app'):
             cls.app.quit()
 
@@ -52,7 +52,7 @@ class TestButtonStability(unittest.TestCase):
         mock_save_dialog.return_value = ('', '')
         mock_color_dialog.return_value = QColor(Qt.red)
 
-        # 收集所有按钮
+        # Collect all buttons
         buttons_to_test = [
             # ImageAndSelectionWidget buttons
             (self.window.imageAndSelectionWidget.openImageButton, "Open Image"),
@@ -69,7 +69,7 @@ class TestButtonStability(unittest.TestCase):
             (self.window.mosaicWidget.applyMosaicButton, "Apply Mosaic"),
         ]
 
-        # 测试每个按钮
+        # Test each button
         for button, button_name in buttons_to_test:
             with self.subTest(button=button_name):
                 try:
@@ -81,7 +81,7 @@ class TestButtonStability(unittest.TestCase):
     @patch('PyQt5.QtWidgets.QFileDialog.getSaveFileName')
     def test_all_shortcuts(self, mock_save_dialog, mock_open_dialog):
         """Test all shortcuts in the application"""
-        # 模拟对话框返回值
+        # Simulate dialog return values
         mock_open_dialog.return_value = ('', '')
         mock_save_dialog.return_value = ('', '')
 
@@ -100,7 +100,7 @@ class TestButtonStability(unittest.TestCase):
             ((Qt.ControlModifier, Qt.Key_M), "Ctrl+M (Apply Mosaic)"),
         ]
 
-        # 测试每个快捷键
+        # Test each shortcut
         for (modifier, key), shortcut_name in shortcuts_to_test:
             with self.subTest(shortcut=shortcut_name):
                 try:
@@ -119,15 +119,15 @@ class TestButtonStability(unittest.TestCase):
             (self.window.mosaicWidget.sizeSlider, "Mosaic Size"),
         ]
 
-        # 测试每个滑块的极值和中间值
+        # Test min, max and middle values for each slider
         for slider, slider_name in sliders_to_test:
             with self.subTest(slider=slider_name):
                 try:
-                    # 测试最小值
+                    # Test minimum value
                     slider.setValue(slider.minimum())
-                    # 测试中间值
+                    # Test middle value
                     slider.setValue((slider.minimum() + slider.maximum()) // 2)
-                    # 测试最大值
+                    # Test maximum value
                     slider.setValue(slider.maximum())
                 except Exception as e:
                     self.fail(f"Slider '{slider_name}' crashed with error: {str(e)}")
