@@ -6,6 +6,7 @@ from ui.image_and_selection_widget import ImageAndSelectionWidget
 from ui.mosaic_widget import MosaicWidget
 from ui.text_widget import TextWidget
 from ui.blur_widget import BlurWidget
+from ui.camera_widget import CameraWidget
 from config.settings import Settings
 from utils.shortcut_utils import create_shortcut
 
@@ -42,6 +43,9 @@ class MainWindow(QMainWindow):
 
         self.blurWidget = BlurWidget(self.imageAndSelectionWidget)
         self.tabs.addTab(self.blurWidget, "Add Blur")
+
+        self.cameraWidget = CameraWidget(self.imageAndSelectionWidget)
+        self.tabs.addTab(self.cameraWidget, "Camera Effect")
 
     def initShortcuts(self):
         # File operations

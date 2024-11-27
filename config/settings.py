@@ -8,6 +8,7 @@ class CommonWidgetSettings:
         BUTTON_HEIGHT = 40
         SLIDER_HEIGHT = 30
         LABEL_HEIGHT = 20
+        INPUT_HEIGHT = 30
 
 
 class ShortcutSettings:
@@ -28,6 +29,7 @@ class ShortcutSettings:
         APPLY_TEXT = None
         APPLY_MOSAIC = "Ctrl+M"
         APPLY_BLUR = "Ctrl+B"
+        APPLY_CAMERA_EFFECT = None
 
 class ButtonTextSettings:
     """Button text settings with optional shortcuts"""
@@ -44,6 +46,7 @@ class ButtonTextSettings:
         APPLY_TEXT = ("Add Text", ShortcutSettings.Tools.APPLY_TEXT)
         APPLY_MOSAIC = ("Apply Mosaic", ShortcutSettings.Tools.APPLY_MOSAIC)
         APPLY_BLUR = ("Apply Blur", ShortcutSettings.Tools.APPLY_BLUR)
+        APPLY_CAMERA_EFFECT = ("Apply Camera Effect", ShortcutSettings.Tools.APPLY_CAMERA_EFFECT)
 
 
 class TextWidgetSettings:
@@ -129,16 +132,26 @@ class Settings:
         INTENSITY_LABEL_TEXT = "Blur Intensity: {}"
         ANGLE_LABEL_TEXT = "Blur Angle: {}°"
 
-    @staticmethod
-    def get_button_text_with_shortcut(text_and_shortcut: tuple) -> str:
-        """Get button text with shortcut if available
+    class Camera:
+        # Battery level settings
+        BATTERY_LEVEL = {
+            'MIN': 0,
+            'MAX': 100,
+            'DEFAULT': 1.0
+        }
         
-        Args:
-            text_and_shortcut: Tuple of (button_text, shortcut)
-            
-        Returns:
-            str: Button text, optionally with shortcut in format "Button Text (Ctrl+X)"
-        """
+        # Timer text settings
+        TIMER_TEXT = {
+            'DEFAULT': "00:00:00.000",
+            'FORMAT': "HH:MM:SS.mmm"
+        }
+        
+        # UI text
+        BATTERY_LABEL_TEXT = "Battery: {:.0%}"
+        TIMER_LABEL_TEXT = "Timer: HH:MM:SS.mmm"
+        
+    @staticmethod
+    def get_button_text_with_shortcut(text_and_shortcut):
         text, shortcut = text_and_shortcut
         if shortcut:
             return f"{text} ({shortcut})"
