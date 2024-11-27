@@ -19,6 +19,11 @@ Create dynamic motion blur effects with adjustable intensity and angle.
 
 ![Motion Blur Example](docs/images/motion_blur_example.png)
 
+### Camera Effect
+Add camera-style overlay effects, including battery indicator and timer.
+
+![Camera Effect Example](docs/images/camera_effect_example.png)
+
 ## Other Features
 - Image loading and saving
 - Flexible rectangle and lasso selection tools
@@ -76,6 +81,7 @@ image_tools/
 │   ├── text_widget.py     # Text overlay tool widget
 │   ├── mosaic_widget.py   # Mosaic effect tool widget
 │   ├── blur_widget.py     # Motion blur tool widget
+│   ├── camera_widget.py   # Camera effect tool widget
 │   └── image_and_selection_widget.py  # Image display and selection widget
 │
 ├── utils/                  # Utility functions
@@ -120,6 +126,11 @@ Feel free to open issues or submit pull requests.
 创建动态运动模糊效果，可调整强度和角度。
 
 ![运动模糊示例](docs/images/motion_blur_example.png)
+
+### 相机效果
+添加相机风格的覆盖效果，包括电池指示器和计时器。
+
+![相机效果示例](docs/images/camera_effect_example.png)
 
 ## 其他功能
 - 图像加载和保存
@@ -178,6 +189,7 @@ image_tools/
 │   ├── text_widget.py     # 文字工具组件
 │   ├── mosaic_widget.py   # 马赛克工具组件
 │   ├── blur_widget.py     # 运动模糊工具组件
+│   ├── camera_widget.py   # 相机效果工具组件
 │   └── image_and_selection_widget.py  # 图像显示和选择组件
 │
 ├── utils/                  # 工具函数
